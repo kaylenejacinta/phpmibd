@@ -23,9 +23,10 @@ if ($mahasiswa) {
     $_SESSION["role"] = "mahasiswa";
     $_SESSION["npm"]  = $mahasiswa["NPM"];
     echo json_encode([
-        "role" => "mahasiswa",
-        "nama" => $mahasiswa["Nama"],
-        "npm"  => $mahasiswa["NPM"]
+        "status" => "OK",
+        "role"   => "MAHASISWA",        
+        "id"     => $mahasiswa["NPM"],
+        "nama"   => $mahasiswa["Nama"]
     ]);
     exit;
 }
@@ -40,9 +41,10 @@ if ($dosen) {
     $_SESSION["role"]     = "dosen";
     $_SESSION["id_dosen"] = $dosen["Id_Dosen"];
     echo json_encode([
-        "role"     => "dosen",
-        "nama"     => $dosen["Nama"],
-        "id_dosen" => $dosen["Id_Dosen"]
+        "status" => "OK",
+        "role"   => "DOSEN",
+        "id"     => $dosen["Id_Dosen"],
+        "nama"   => $dosen["Nama"]
     ]);
     exit;
 }
