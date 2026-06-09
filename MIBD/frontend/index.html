@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistem FRS - Universitas Wombat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===================== RESET & BASE ===================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #6c4fe0;
+            --primary-light: #ede9fb;
+            --primary-dark: #5338c4;
+            --accent: #22d3a5;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --bg: #f0f2f8;
+            --white: #ffffff;
+            --text: #1e1b2e;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --sidebar-w: 230px;
+            --topbar-h: 64px;
+            --radius: 14px;
+            --shadow: 0 2px 16px rgba(108,79,224,.10);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .page { display: none; }
+
+        /* ===================== TOPBAR ===================== */
+        .topbar {
+            height: var(--topbar-h);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            box-shadow: 0 1px 0 var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .topbar-brand { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+
+        .topbar-role {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 13px;
+        }
+
+        /* ===================== APP LAYOUT ===================== */
+        .app-layout { display: flex; height: calc(100vh - var(--topbar-h)); }
+
+        /* ===================== SIDEBAR ===================== */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--white);
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-right: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .sidebar-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            padding: 10px 10px 6px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-muted);
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all .15s;
+            font-size: 13.5px;
+        }
+
+        .sidebar a:hover { background: var(--primary-light); color: var(--primary); }
+        .sidebar a.active { background: var(--primary); color: white; }
+        .sidebar-icon { font-size: 16px; width: 20px; text-align: center; }
+
+        .sidebar-bottom { margin-top: auto; border-top: 1px solid var(--border); padding-top: 10px; }
+
+        /* ===================== CONTENT ===================== */
+        .content { flex: 1; padding: 28px; overflow-y: auto; }
+
+        .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+        .page-subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 13px; }
+
+        /* ===================== CARDS ===================== */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* ===================== TABLE ===================== */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .data-table th:first-child { border-radius: 10px 0 0 0; }
+        .data-table th:last-child  { border-radius: 0 10px 0 0; }
+        .data-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); }
+        .data-table tbody tr:hover { background: var(--primary-light); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+
+        /* ===================== BUTTONS ===================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 9px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 13.5px;
+            transition: all .15s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-success { background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
+        .btn-success:hover { background: var(--success); color: white; }
+        .btn-sm { padding: 6px 14px; font-size: 12.5px; border-radius: 7px; }
+        .btn-outline { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        .action-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
+        .action-row .btn:last-child { margin-left: auto; }
+
+        /* ===================== LOGIN ===================== */
+        .login-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6c4fe0 0%, #a78bfa 50%, #22d3a5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 420px;
+            box-shadow: 0 24px 80px rgba(108,79,224,.25);
+        }
+
+        .login-logo { text-align: center; margin-bottom: 32px; }
+        .login-logo h1 { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+        .login-logo p  { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border .15s;
+        }
+
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 8px;
+            transition: background .15s;
+        }
+
+        .login-btn:hover { background: var(--primary-dark); }
+
+        /* ===================== BADGES ===================== */
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: #ecfdf5; color: var(--success); }
+        .badge-warning { background: #fffbeb; color: var(--warning); }
+        .badge-danger  { background: #fef2f2; color: var(--danger); }
+        .badge-primary { background: var(--primary-light); color: var(--primary); }
+
+        /* ===================== STAT CARDS ===================== */
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+
+        .stat-icon.purple { background: var(--primary-light); }
+        .stat-icon.green  { background: #ecfdf5; }
+        .stat-icon.yellow { background: #fffbeb; }
+
+        .stat-value { font-size: 26px; font-weight: 800; line-height: 1; }
+        .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* ===================== SKS BOX ===================== */
+        .sks-box {
+            background: var(--primary-light);
+            border: 1.5px solid #c4b5fd;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sks-box .label { color: var(--primary); font-weight: 600; }
+        .sks-box .value { font-size: 22px; font-weight: 800; color: var(--primary); }
+
+        /* ===================== MK LIST ===================== */
+        .mk-list { list-style: none; }
+
+        .mk-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mk-list li:last-child { border-bottom: none; }
+        .mk-list li::before { content: '•'; color: var(--primary); font-size: 18px; line-height: 1; }
+
+        /* ===================== EMPTY STATE ===================== */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+
+        /* ===================== LOADING ===================== */
+        .loading { text-align: center; padding: 28px; color: var(--text-muted); font-size: 13px; }
+
+        /* ===================== ATUR JADWAL FORM ===================== */
+        .atur-jadwal-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            align-items: end;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .atur-jadwal-row:last-child { border-bottom: none; }
+
+        .atur-jadwal-row label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .atur-jadwal-row .mk-label {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: var(--text);
+        }
+
+        .atur-jadwal-row .mk-kode {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .atur-jadwal-row select, .atur-jadwal-row input[type=text], .atur-jadwal-row input[type=time] {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .atur-jadwal-row select:focus, .atur-jadwal-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .icon-action {
+    cursor: pointer;
+    font-size: 18px;
+    margin: 0 6px;
+    transition: 0.2s;
+}
+
+.icon-action:hover {
+    transform: scale(1.2);
+}
+
+.icon-action.edit {
+    color: #f1c40f;
+}
+
+.icon-action.delete {
+    color: #e74c3c;
+}
+
+        /* =========================
+   FORM ATUR JADWAL DOSEN
+========================= */
+
+#atur-jadwal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+/* label kalau kamu pakai <label> */
+#atur-jadwal-container label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-top: 6px;
+}
+
+/* input + select */
+#atur-jadwal-container input,
+#atur-jadwal-container select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+    background: #fff;
+}
+
+/* focus effect */
+#atur-jadwal-container input:focus,
+#atur-jadwal-container select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74,144,226,0.15);
+}
+
+/* judul MK yang dipilih */
+#atur-jadwal-container h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #222;
+}
+
+/* tombol simpan di dalam form */
+#atur-jadwal-container button {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #4a90e2;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* hover button */
+#atur-jadwal-container button:hover {
+    background: #3a78c2;
+}
+
+/* card container biar lebih enak */
+.card {
+    border-radius: 12px;
+    background: #fff;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* loading state */
+.loading {
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+
+<!-- ==================== LOGIN ==================== -->
+<div id="page-login" class="page">
+    <div class="login-page">
+        <div class="login-card">
+            <div class="login-logo">
+                <h1>🎓 Universitas Wombat</h1>
+                <p>Sistem Informasi Akademik & FRS</p>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Masukkan email kamu">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Masukkan password">
+            </div>
+            <button class="login-btn" onclick="login()">Masuk →</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== MAHASISWA ==================== -->
+
+<!-- Dashboard Mahasiswa -->
+<div id="page-dashboard" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Mahasiswa</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a class="active" onclick="showPage('page-dashboard')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a onclick="showPage('page-jadwal-kuliah')"><span class="sidebar-icon">📅</span> Jadwal Kuliah</a>
+            <a onclick="showPage('page-pengisian-frs')"><span class="sidebar-icon">📝</span> Pengisian FRS</a>
+            <a onclick="showPage('page-sejarah-frs')"><span class="sidebar-icon">📜</span> History FRS</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title">Dashboard Mahasiswa</div>
+            <div class="page-subtitle">Selamat datang di Sistem FRS Universitas Wombat</div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">📚</div>
+                    <div><div class="stat-value" id="stat-mk-tersedia">-</div><div class="stat-label">MK Tersedia</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div><div class="stat-value" id="stat-mk-diambil">-</div><div class="stat-label">MK Diambil</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">⚡</div>
+                    <div><div class="stat-value" id="stat-sks-aktif">-</div><div class="stat-label">Total SKS Aktif</div></div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">📚 Mata Kuliah Semester Ini</div>
+                    <ul class="mk-list" id="dashboard-mk-tersedia"><li class="loading">Memuat...</li></ul>
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="showPage('page-pengisian-frs')">Isi FRS →</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">🧾 FRS Aktif Saya</div>
+                    <table class="data-table" style="margin-top:0">
+                        <thead><tr><th>Kode</th><th>Mata Kuliah</th><th>SKS</th></tr></thead>
+                        <tbody id="dashboard-frs-aktif"><tr><td colspan="3"><div class="loading">Memuat...</div></td></tr></tbody>
+                    </table>
+                    <div class="sks-box">
+                        <span class="label">Total SKS</span>
+                        <span class="value" id="dashboard-total-sks">-</span>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="showPage('page-pengisian-frs')">Edit FRS</button>
+                        <button class="btn btn-primary" onclick="finalSubmitFRS()">🚀 Final Submit</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Jadwal Kuliah Mahasiswa -->
+<div id="page-jadwal-kuliah" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Mahasiswa</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a onclick="showPage('page-dashboard')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a class="active" onclick="showPage('page-jadwal-kuliah')"><span class="sidebar-icon">📅</span> Jadwal Kuliah</a>
+            <a onclick="showPage('page-pengisian-frs')"><span class="sidebar-icon">📝</span> Pengisian FRS</a>
+            <a onclick="showPage('page-sejarah-frs')"><span class="sidebar-icon">📜</span> History FRS</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title">📅 Jadwal Kuliah Saya</div>
+            <div class="page-subtitle">Jadwal berdasarkan mata kuliah yang kamu ambil di FRS</div>
+            <div class="card">
+                <table class="data-table" style="margin-top:0">
+                    <thead>
+                        <tr><th>Hari</th><th>Jam</th><th>Kode MK</th><th>Mata Kuliah</th><th>SKS</th><th>Ruangan</th><th>Dosen</th></tr>
+                    </thead>
+                    <tbody id="jadwal-mahasiswa-body">
+                        <tr><td colspan="7"><div class="loading">Memuat jadwal...</div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Pengisian FRS -->
+<div id="page-pengisian-frs" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Mahasiswa</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a onclick="showPage('page-dashboard')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a onclick="showPage('page-jadwal-kuliah')"><span class="sidebar-icon">📅</span> Jadwal Kuliah</a>
+            <a class="active" onclick="showPage('page-pengisian-frs')"><span class="sidebar-icon">📝</span> Pengisian FRS</a>
+            <a onclick="showPage('page-sejarah-frs')"><span class="sidebar-icon">📜</span> History FRS</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title">📝 Pengisian FRS</div>
+            <div class="page-subtitle">Pilih mata kuliah yang ingin kamu ambil semester ini</div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">📚 Daftar Mata Kuliah Tersedia</div>
+                    <table class="data-table" style="margin-top:0">
+                        <thead><tr><th>Pilih</th><th>Kode</th><th>Mata Kuliah</th><th>SKS</th><th>Jadwal</th></tr></thead>
+                        <tbody id="frs-matkul-body"><tr><td colspan="5"><div class="loading">Memuat...</div></td></tr></tbody>
+                    </table>
+                </div>
+                <div>
+                    <div class="card">
+                        <div class="card-title">✅ MK yang Sudah Diambil</div>
+                        <div id="frs-sudah-diambil"><div class="loading">Memuat...</div></div>
+                        <div class="sks-box" style="margin-top:12px">
+                            <span class="label">Total SKS Terpilih</span>
+                            <span class="value" id="total-sks">0</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📋 Ringkasan Pilihan Baru</div>
+                        <div id="selected-course" style="color:var(--text-muted);font-size:13px;line-height:1.8">Belum ada mata kuliah dipilih.</div>
+                        <div class="action-row" style="margin-top:16px">
+                            <button class="btn btn-primary" onclick="simpanFRS()">💾 Simpan FRS</button>
+                            <button class="btn btn-success" onclick="finalSubmitFRS()">🚀 Final Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- History FRS -->
+<div id="page-sejarah-frs" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Mahasiswa</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a onclick="showPage('page-dashboard')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a onclick="showPage('page-jadwal-kuliah')"><span class="sidebar-icon">📅</span> Jadwal Kuliah</a>
+            <a onclick="showPage('page-pengisian-frs')"><span class="sidebar-icon">📝</span> Pengisian FRS</a>
+            <a class="active" onclick="showPage('page-sejarah-frs')"><span class="sidebar-icon">📜</span> History FRS</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title">📜 History FRS</div>
+            <div class="page-subtitle">Riwayat FRS kamu dari semua semester</div>
+            <div class="card">
+                <table class="data-table" style="margin-top:0">
+                    <thead><tr><th>Semester</th><th>Total SKS</th><th>Status</th><th>Aksi</th></tr></thead>
+                    <tbody id="sejarah-frs-body"><tr><td colspan="4"><div class="loading">Memuat...</div></td></tr></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Detail FRS -->
+<div id="page-detail-frs" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Mahasiswa</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a onclick="showPage('page-dashboard')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a onclick="showPage('page-jadwal-kuliah')"><span class="sidebar-icon">📅</span> Jadwal Kuliah</a>
+            <a onclick="showPage('page-pengisian-frs')"><span class="sidebar-icon">📝</span> Pengisian FRS</a>
+            <a class="active" onclick="showPage('page-sejarah-frs')"><span class="sidebar-icon">📜</span> History FRS</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title" id="detail-semester-title">Detail FRS</div>
+            <div class="page-subtitle" id="detail-total-sks"></div>
+            <div class="card">
+                <div class="card-title" id="detail-status-badge"></div>
+                <table class="data-table" style="margin-top:0">
+                    <thead><tr><th>Kode MK</th><th>Mata Kuliah</th><th>SKS</th><th>Jadwal</th><th>Ruangan</th></tr></thead>
+                    <tbody id="detail-frs-body"><tr><td colspan="5"><div class="loading">Memuat...</div></td></tr></tbody>
+                </table>
+            </div>
+            <div class="action-row">
+                <button class="btn btn-outline" onclick="showPage('page-sejarah-frs')">← Kembali</button>
+                <button class="btn btn-primary" id="btn-edit-frs" onclick="showPage('page-pengisian-frs')">✏️ Edit FRS Ini</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+
+<!-- ==================== DOSEN ==================== -->
+
+<!-- Dashboard Dosen -->
+<div id="page-dashboard-dosen" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Dosen</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a class="active" onclick="showPage('page-dashboard-dosen')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a onclick="showPage('page-jadwal-saya')"><span class="sidebar-icon">👤</span> Jadwal Saya</a>
+            <a onclick="showPage('page-jadwal-semua')"><span class="sidebar-icon">🌍</span> Jadwal Semua MK</a>
+            <a onclick="showPage('page-kelola-mata-kuliah')"><span class="sidebar-icon">🛠️</span> Kelola MK & Jadwal</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title">Dashboard Dosen</div>
+            <div class="page-subtitle">Selamat datang di Sistem Akademik Universitas Wombat</div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">📚</div>
+                    <div><div class="stat-value" id="dosen-stat-mk">-</div><div class="stat-label">MK Diajar</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">📅</div>
+                    <div><div class="stat-value" id="dosen-stat-jadwal">-</div><div class="stat-label">Jadwal Aktif</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">👥</div>
+                    <div><div class="stat-value" id="dosen-stat-mahasiswa">-</div><div class="stat-label">Total Mahasiswa</div></div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">📚 Mata Kuliah yang Diajar</div>
+                    <ul class="mk-list" id="dashboard-dosen-matkul"><li class="loading">Memuat...</li></ul>
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="showPage('page-kelola-mata-kuliah')">Kelola MK →</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📅 Preview Jadwal Saya</div>
+                    <table class="data-table" style="margin-top:0">
+                        <thead><tr><th>Hari</th><th>Jam</th><th>Ruangan</th><th>Mata Kuliah</th></tr></thead>
+                        <tbody id="dashboard-dosen-jadwal"><tr><td colspan="4"><div class="loading">Memuat...</div></td></tr></tbody>
+                    </table>
+                    <div class="action-row">
+                        <button class="btn btn-outline" onclick="showPage('page-jadwal-saya')">Lihat Semua →</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Jadwal Saya (Dosen) -->
+<div id="page-jadwal-saya" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Dosen</span>
+    </header>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a onclick="showPage('page-dashboard-dosen')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a class="active" onclick="showPage('page-jadwal-saya')"><span class="sidebar-icon">👤</span> Jadwal Saya</a>
+            <a onclick="showPage('page-jadwal-semua')"><span class="sidebar-icon">🌍</span> Jadwal Semua MK</a>
+            <a onclick="showPage('page-kelola-mata-kuliah')"><span class="sidebar-icon">🛠️</span> Kelola MK & Jadwal</a>
+
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="page-title">👤 Jadwal Mata Kuliah Saya</div>
+            <div class="page-subtitle">Jadwal khusus mata kuliah yang Anda ajar</div>
+
+            <div class="card">
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Kode MK</th>
+                            <th>Mata Kuliah</th>
+                            <th>Hari</th>
+                            <th>Jam Mulai</th>
+                            <th>Jam Selesai</th>
+                            <th>Ruangan</th>
+                            <th>SKS</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="jadwal-dosen-body">
+                        <tr>
+                            <td colspan="8" style="text-align:center;padding:20px;">
+                                ⏳ Memuat data...
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+        </main>
+    </div>
+</div>
+<!-- Jadwal Semua MK -->
+<div id="page-jadwal-semua" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Dosen</span>
+    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+            <a onclick="showPage('page-dashboard-dosen')"><span class="sidebar-icon">🏠</span> Dashboard</a>
+            <a onclick="showPage('page-jadwal-saya')"><span class="sidebar-icon">👤</span> Jadwal Saya</a>
+            <a class="active" onclick="showPage('page-jadwal-semua')"><span class="sidebar-icon">🌍</span> Jadwal Semua MK</a>
+            <a onclick="showPage('page-kelola-mata-kuliah')"><span class="sidebar-icon">🛠️</span> Kelola MK & Jadwal</a>
+            <div class="sidebar-bottom">
+                <a onclick="logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="page-title">🌍 Jadwal Semua Mata Kuliah</div>
+            <div class="page-subtitle">Seluruh jadwal kampus dari semua dosen</div>
+            <div class="card">
+                <table class="data-table" style="margin-top:0">
+                    <thead><tr><th>Mata Kuliah</th><th>Dosen</th><th>Hari</th><th>Jam Mulai</th><th>Jam Selesai</th><th>Ruangan</th><th>SKS</th></tr></thead>
+                    <tbody id="jadwal-semua-body"><tr><td colspan="7"><div class="loading">Memuat...</div></td></tr></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Kelola MK + Atur Jadwal -->
+<div id="page-kelola-mata-kuliah" class="page">
+    <header class="topbar">
+        <span class="topbar-brand">🎓 Universitas Wombat</span>
+        <span class="topbar-role">Dosen</span>
+    </header>
+
+    <div class="app-layout">
+
+        <aside class="sidebar">
+            <div class="sidebar-label">Menu</div>
+
+            <a onclick="showPage('page-dashboard-dosen')">
+                <span class="sidebar-icon">🏠</span> Dashboard
+            </a>
+
+            <a onclick="showPage('page-jadwal-saya')">
+                <span class="sidebar-icon">👤</span> Jadwal Saya
+            </a>
+
+            <a onclick="showPage('page-jadwal-semua')">
+                <span class="sidebar-icon">🌍</span> Jadwal Semua MK
+            </a>
+
+            <a class="active" onclick="showPage('page-kelola-mata-kuliah')">
+                <span class="sidebar-icon">🛠️</span> Kelola MK & Jadwal
+            </a>
+
+            <div class="sidebar-bottom">
+                <a onclick="logout()">
+                    <span class="sidebar-icon">🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="content">
+
+            <div class="page-title">🛠️ Kelola Mata Kuliah & Jadwal</div>
+            <div class="page-subtitle">
+                Pilih 1 Mata Kuliah lalu atur jadwalnya
+            </div>
+
+            <!-- ========================= -->
+            <!-- LIST MATA KULIAH -->
+            <!-- ========================= -->
+            <div class="card">
+                <div class="card-title">📚 Pilih Mata Kuliah</div>
+
+                <table class="data-table" style="margin-top:0">
+                    <thead>
+                        <tr>
+                            <th>Pilih</th>
+                            <th>Kode MK</th>
+                            <th>Mata Kuliah</th>
+                            <th>SKS</th>
+                            <th>Semester</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="kelola-matkul-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="loading">Memuat...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="action-row">
+                    <button class="btn btn-primary"
+                        onclick="simpanMataKuliahAjaran()">
+                        💾 Pilih MK
+                    </button>
+                </div>
+            </div>
+
+            <!-- ========================= -->
+            <!-- FORM JADWAL -->
+            <!-- ========================= -->
+            <div class="card">
+                <div class="card-title">📅 Atur Jadwal</div>
+
+                <div id="atur-jadwal-container">
+                    <div class="loading">
+                        Pilih mata kuliah terlebih dahulu
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-primary"
+                        onclick="simpanJadwal()">
+                        💾 Simpan Jadwal
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+
+<!-- ==================== SCRIPT ==================== -->
+<script>
+    const BASE = "http://localhost/MIBD/backend/src";
+    let _jadwalExisting = {};
+
+    // ==============================
+    // ROUTING
+    // ==============================
+    function showPage(pageId) {
+        document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+        document.getElementById(pageId).style.display = "block";
+
+        const map = {
+            "page-dashboard":          loadDashboardMahasiswa,
+            "page-jadwal-kuliah":      loadJadwalMahasiswa,
+            "page-pengisian-frs":      loadMataKuliahFRS,
+            "page-sejarah-frs":        loadSejarahFRS,
+            "page-dashboard-dosen":    loadDashboardDosen,
+            "page-jadwal-saya":        loadJadwalDosen,
+            "page-jadwal-semua":       loadJadwalSemua,
+            "page-kelola-mata-kuliah": loadKelolaMataKuliah,
+        };
+
+        if (map[pageId]) map[pageId]();
+    }
+
+    // ==============================
+    // LOGIN / LOGOUT
+    // ==============================
+    async function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+        alert("Email dan password wajib diisi!");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${BASE}/login.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        console.log("LOGIN:", data);
+
+        if (data.status === "OK") {
+
+            // simpan juga di browser (backup)
+            localStorage.setItem("role", data.role);
+            localStorage.setItem("id", data.id);
+
+            if (data.role === "DOSEN") {
+                showPage("page-dashboard-dosen");
+                loadJadwalDosen(); // auto load
+            } else {
+                showPage("page-dashboard");
+            }
+
+        } else {
+            alert("Login gagal!");
+        }
+
+    } catch (e) {
+        console.error(e);
+        alert("Server tidak terhubung!");
+    }
+}
+
+    function logout() {
+    fetch(`${BASE}/logout.php`, {
+        credentials: "include"
+    });
+
+    localStorage.clear();
+    showPage("page-login");
+}
+
+    // ==============================
+    // MAHASISWA - DASHBOARD
+    // ==============================
+    async function loadDashboardMahasiswa() {
+        try {
+            const [resMK, resFRS] = await Promise.all([
+                fetch(`${BASE}/matakuliah.php`),
+                fetch(`${BASE}/frs_aktif.php`)
+            ]);
+            const dataMK  = await resMK.json();
+            const dataFRS = await resFRS.json();
+
+            // MK tersedia
+            document.getElementById("dashboard-mk-tersedia").innerHTML =
+                dataMK.map(mk => `<li>${mk.Kode_Matkul} - ${mk.Nama_Matkul} <span class="badge badge-primary" style="margin-left:auto">${mk.SKS} SKS</span></li>`).join("") || "<li>Tidak ada data</li>";
+
+            // FRS aktif
+            let totalSKS = 0;
+            const htmlFRS = dataFRS.map(f => {
+                totalSKS += Number(f.SKS);
+                return `<tr><td>${f.Kode_Matkul}</td><td>${f.Nama_Matkul}</td><td>${f.SKS}</td></tr>`;
+            }).join("") || `<tr><td colspan="3" style="text-align:center;color:var(--text-muted)">Belum ada FRS aktif</td></tr>`;
+
+            document.getElementById("dashboard-frs-aktif").innerHTML = htmlFRS;
+            document.getElementById("dashboard-total-sks").textContent = totalSKS;
+            document.getElementById("stat-mk-tersedia").textContent  = dataMK.length;
+            document.getElementById("stat-mk-diambil").textContent   = dataFRS.length;
+            document.getElementById("stat-sks-aktif").textContent    = totalSKS;
+        } catch(e) { console.error(e); }
+    }
+
+    // ==============================
+    // MAHASISWA - JADWAL KULIAH
+    // ==============================
+    async function loadJadwalMahasiswa() {
+        try {
+            const res  = await fetch(`${BASE}/jadwal_mahasiswa.php`);
+            const data = await res.json();
+            document.getElementById("jadwal-mahasiswa-body").innerHTML =
+                data.map(j => `<tr>
+                    <td>${j.Hari ?? '-'}</td>
+                    <td>${j.jam_mulai ?? '-'} - ${j.jam_selesai ?? '-'}</td>
+                    <td>${j.Kode_Matkul}</td>
+                    <td>${j.Nama_Matkul}</td>
+                    <td>${j.SKS}</td>
+                    <td>${j.Ruangan ?? '-'}</td>
+                    <td>${j.Nama_Dosen ?? '-'}</td>
+                </tr>`).join("") ||
+                `<tr><td colspan="7"><div class="empty-state"><div class="icon">📭</div><p>Belum ada jadwal. Isi FRS terlebih dahulu.</p></div></td></tr>`;
+        } catch(e) { console.error(e); }
+    }
+
+    // ==============================
+    // MAHASISWA - PENGISIAN FRS
+    // ==============================
+    async function loadMataKuliahFRS() {
+        try {
+            const [resMK, resFRS] = await Promise.all([
+                fetch(`${BASE}/matakuliah.php`),
+                fetch(`${BASE}/frs_aktif.php`)
+            ]);
+            const dataMK  = await resMK.json();
+            const dataFRS = await resFRS.json();
+            const sudahAmbil = new Set(dataFRS.map(f => f.Kode_Matkul));
+
+            document.getElementById("frs-matkul-body").innerHTML =
+                dataMK.map(mk => `<tr>
+                    <td><input type="checkbox" class="mk" ${sudahAmbil.has(mk.Kode_Matkul) ? "checked" : ""}
+                        data-kode="${mk.Kode_Matkul}" data-nama="${mk.Nama_Matkul}" data-sks="${mk.SKS}"></td>
+                    <td>${mk.Kode_Matkul}</td>
+                    <td>${mk.Nama_Matkul}</td>
+                    <td>${mk.SKS}</td>
+                    <td>${mk.Hari ? mk.Hari + ' ' + (mk.jam_mulai ?? '') : '-'}</td>
+                </tr>`).join("") || `<tr><td colspan="5">Tidak ada MK tersedia</td></tr>`;
+
+            renderFRSSudahDiambil(dataFRS);
+            hitungSKS();
+        } catch(e) { console.error(e); }
+    }
+
+    function renderFRSSudahDiambil(dataFRS) {
+        if (!dataFRS.length) {
+            document.getElementById("frs-sudah-diambil").innerHTML =
+                `<div class="empty-state" style="padding:20px"><div class="icon">📭</div><p>Belum ada MK diambil</p></div>`;
+            return;
+        }
+        document.getElementById("frs-sudah-diambil").innerHTML =
+            `<table class="data-table" style="margin-top:0">
+                <thead><tr><th>Kode</th><th>Mata Kuliah</th><th>SKS</th><th></th></tr></thead>
+                <tbody>${dataFRS.map(f =>
+                    `<tr>
+                        <td>${f.Kode_Matkul}</td>
+                        <td>${f.Nama_Matkul}</td>
+                        <td>${f.SKS}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="dropMK('${f.Kode_Matkul}')">Drop</button></td>
+                    </tr>`).join("")}
+                </tbody>
+            </table>`;
+    }
+
+    function hitungSKS() {
+        const cbs = document.querySelectorAll(".mk:checked");
+        let total = 0, daftar = "";
+        cbs.forEach(cb => {
+            total += Number(cb.dataset.sks);
+            daftar += `• ${cb.dataset.kode} - ${cb.dataset.nama} (${cb.dataset.sks} SKS)<br>`;
+        });
+        document.getElementById("total-sks").textContent = total;
+        document.getElementById("selected-course").innerHTML = daftar || "Belum ada mata kuliah dipilih.";
+    }
+
+    document.addEventListener("change", e => { if (e.target.classList.contains("mk")) hitungSKS(); });
+
+    async function simpanFRS() {
+        const cbs = document.querySelectorAll(".mk:checked");
+        if (!cbs.length) { alert("Pilih minimal 1 mata kuliah!"); return; }
+        const matkul = [...cbs].map(cb => ({ kode: cb.dataset.kode }));
+        try {
+            const res = await fetch(`${BASE}/simpan_frs.php`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ matkul })
+            });
+            alert(await res.text());
+            loadMataKuliahFRS();
+        } catch(e) { alert("Gagal simpan FRS: " + e); }
+    }
+
+    async function dropMK(kodeMK) {
+        if (!confirm(`Yakin mau drop ${kodeMK}?`)) return;
+        try {
+            const res = await fetch(`${BASE}/drop_frs.php`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ kode: kodeMK })
+            });
+            alert(await res.text());
+            loadMataKuliahFRS();
+        } catch(e) { alert("Gagal drop MK: " + e); }
+    }
+
+    async function finalSubmitFRS() {
+        if (!confirm("Yakin ingin Final Submit? Data tidak bisa diubah setelah ini.")) return;
+        try {
+            const res = await fetch(`${BASE}/final_submit_frs.php`, { method: "POST" });
+            alert(await res.text());
+        } catch(e) { alert("Gagal submit: " + e); }
+    }
+
+    // ==============================
+    // MAHASISWA - HISTORY FRS
+    // ==============================
+    async function loadSejarahFRS() {
+        try {
+            const res  = await fetch(`${BASE}/sejarah_frs.php`);
+            const data = await res.json();
+            document.getElementById("sejarah-frs-body").innerHTML =
+                data.map(frs => {
+                    const cls = frs.Status === "Disetujui" ? "badge-success" : frs.Status === "Pending" ? "badge-warning" : "badge-danger";
+                    return `<tr>
+                        <td>${frs.Semester}</td>
+                        <td>${frs.Total_SKS} SKS</td>
+                        <td><span class="badge ${cls}">${frs.Status}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm"
+                                onclick="showDetailFRS('${frs.Semester}',${frs.Total_SKS},'${frs.Status}',${frs.ID_FRS})">
+                                🔍 Detail
+                            </button>
+                        </td>
+                    </tr>`;
+                }).join("") ||
+                `<tr><td colspan="4"><div class="empty-state"><div class="icon">📭</div><p>Belum ada history FRS</p></div></td></tr>`;
+        } catch(e) { console.error(e); }
+    }
+
+    async function showDetailFRS(semester, sks, status, idFRS) {
+        document.getElementById("detail-semester-title").textContent = `📋 Detail FRS - ${semester}`;
+        document.getElementById("detail-total-sks").textContent      = `Total SKS: ${sks}`;
+        const cls = status === "Disetujui" ? "badge-success" : status === "Pending" ? "badge-warning" : "badge-danger";
+        document.getElementById("detail-status-badge").innerHTML = `Status: <span class="badge ${cls}">${status}</span>`;
+        document.getElementById("btn-edit-frs").style.display = status === "Disetujui" ? "none" : "inline-flex";
+
+        showPage("page-detail-frs");
+
+        try {
+            const res  = await fetch(`${BASE}/detail_frs.php?id=${idFRS}`);
+            const data = await res.json();
+            document.getElementById("detail-frs-body").innerHTML =
+                data.map(mk => `<tr>
+                    <td>${mk.Kode_Matkul}</td>
+                    <td>${mk.Nama_Matkul}</td>
+                    <td>${mk.SKS}</td>
+                    <td>${mk.Hari ? mk.Hari + ' ' + (mk.jam_mulai ?? '') + ' - ' + (mk.jam_selesai ?? '') : '-'}</td>
+                    <td>${mk.Ruangan ?? '-'}</td>
+                </tr>`).join("") || `<tr><td colspan="5">Tidak ada data</td></tr>`;
+        } catch(e) { console.error(e); }
+    }
+
+    // ==============================
+    // DOSEN - DASHBOARD
+    // ==============================
+    async function loadDashboardDosen() {
+    try {
+        const res = await fetch(`${BASE}/dashboard_dosen.php`, {
+            credentials: "include"
+        });
+
+        const data = await res.json();
+
+        console.log("DASHBOARD DATA:", data);
+
+        // ======================
+        // MATA KULIAH
+        // ======================
+        document.getElementById("dashboard-dosen-matkul").innerHTML =
+            data.mk.map(mk =>
+                `<li>${mk.Kode_Matkul} - ${mk.Nama_Matkul}</li>`
+            ).join("") || "<li>Belum ada MK</li>";
+
+        // ======================
+        // JADWAL
+        // ======================
+        document.getElementById("dashboard-dosen-jadwal").innerHTML =
+            data.jadwal.map(j => {
+
+                let jamMulai = j.Jam_Mulai?.date?.substring(11,16) || "-";
+                let jamSelesai = j.Jam_Selesai?.date?.substring(11,16) || "-";
+
+                return `
+                <tr>
+                    <td>${j.Hari ?? '-'}</td>
+                    <td>${jamMulai} - ${jamSelesai}</td>
+                    <td>${j.Ruangan ?? '-'}</td>
+                    <td>${j.Nama_Matkul ?? '-'}</td>
+                </tr>`;
+            }).join("") ||
+            `<tr><td colspan="4">Belum ada jadwal</td></tr>`;
+
+        // ======================
+        // STATS
+        // ======================
+        document.getElementById("dosen-stat-mk").textContent = data.mk.length;
+        document.getElementById("dosen-stat-jadwal").textContent = data.jadwal.length;
+        document.getElementById("dosen-stat-mahasiswa").textContent = "-";
+
+    } catch (e) {
+        console.error("ERROR DASHBOARD:", e);
+    }
+}
+
+/* ==============================
+   LOAD JADWAL DOSEN
+============================== */
+async function loadJadwalDosen() {
+    try {
+        const res = await fetch(`${BASE}/jadwalDiajar_dosen.php`, {
+            credentials: "include"
+        });
+
+        const data = await res.json();
+        console.log(data);
+
+        const tbody = document.getElementById("jadwal-dosen-body");
+
+        if (!data.length) {
+            tbody.innerHTML = `<tr><td colspan="8">Tidak ada data</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.map(j => `
+            <tr>
+                <td>${j.Kode_Matkul}</td>
+                <td>${j.Nama_Matkul}</td>
+                <td>${j.Hari}</td>
+                <td>${j.jam_mulai}</td>
+                <td>${j.jam_selesai}</td>
+                <td>${j.Ruangan}</td>
+                <td>${j.SKS}</td>
+                <td>
+                    <button onclick="hapusJadwal('${j.Id_Jadwal}')">🗑 Hapus</button>
+                </td>
+            </tr>
+        `).join("");
+
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+
+/* ==============================
+   DELETE JADWAL
+============================== */
+/* ==============================
+   DELETE JADWAL
+============================== */
+async function hapusJadwal(id) {
+    if (!confirm("Yakin hapus jadwal ini?")) return;
+
+    try {
+        const res = await fetch(`${BASE}/hapus_jadwal_dosen.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include", // Sangat penting agar session terbaca oleh PHP
+            body: JSON.stringify({ id: id }) // Mengirim data ID dalam bentuk JSON
+        });
+
+        // Mengambil respons JSON dari PHP
+        const responseData = await res.json();
+        
+        // Cek status dari PHP
+        if (responseData.status === "success") {
+            alert("Berhasil: " + responseData.message);
+            loadJadwalDosen(); // Refresh tabel setelah berhasil
+        } else {
+            alert("Gagal: " + responseData.message);
+        }
+    } catch (e) {
+        console.error("Fetch Error:", e);
+        alert("Terjadi kesalahan sistem saat menghubungi server.");
+    }
+}
+
+
+/* ==============================
+   EDIT JADWAL
+============================== */
+async function editJadwal(id) {
+
+    const hari = prompt("Hari:");
+    const mulai = prompt("Jam mulai (HH:MM):");
+    const selesai = prompt("Jam selesai (HH:MM):");
+    const ruangan = prompt("Ruangan:");
+
+    if (!hari || !mulai || !selesai || !ruangan) return;
+
+    try {
+        const res = await fetch(`${BASE}/edit_jadwal_dosen.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                id,
+                hari,
+                jam_mulai: mulai,
+                jam_selesai: selesai,
+                ruangan
+            })
+        });
+
+        const result = await res.text();
+        alert(result);
+
+        loadJadwalDosen(); // refresh
+
+    } catch (e) {
+        alert("Gagal edit: " + e);
+    }
+}
+    // ==============================
+    // DOSEN - JADWAL SEMUA
+    // ==============================
+    async function loadJadwalSemua() {
+    try {
+        const res = await fetch(`${BASE}/matakuliah_dosen.php`, {
+            credentials: "include"
+        });
+
+        const text = await res.text();
+        console.log("RAW RESPONSE:", text);
+
+        const data = JSON.parse(text);
+
+        const tbody = document.getElementById("jadwal-semua-body");
+
+        if (!tbody) {
+            console.error("TABEL BODY TIDAK ADA DI HTML");
+            return;
+        }
+
+        if (!Array.isArray(data)) {
+            console.log("DATA BUKAN ARRAY:", data);
+            return;
+        }
+
+        tbody.innerHTML = data.map(j => `
+            <tr>
+                <td>${j.Nama_Matkul ?? '-'}</td>
+                <td>${j.Nama_Dosen ?? '-'}</td>
+                <td>${j.Hari ?? '-'}</td>
+                <td>${j.jam_mulai ?? '-'}</td>
+                <td>${j.jam_selesai ?? '-'}</td>
+                <td>${j.Ruangan ?? '-'}</td>
+                <td>${j.SKS ?? '-'}</td>
+            </tr>
+        `).join("");
+
+    } catch (e) {
+        console.error("ERROR FETCH:", e);
+    }
+}
+    // ==============================
+    // DOSEN - KELOLA MK + JADWAL
+    // ==============================
+let selectedMK = null;
+
+async function loadKelolaMataKuliah() {
+    const res = await fetch(`${BASE}/mk_Dosen.php`, {
+        credentials: "include"
+    });
+
+    const data = await res.json();
+
+    const tbody = document.getElementById("kelola-matkul-body");
+
+    tbody.innerHTML = data.map(mk => `
+        <tr>
+            <td>
+                <input type="radio"
+                    name="mk"
+                    value="${mk.Kode_Matkul}"
+                    onchange="selectedMK = this.value">
+            </td>
+            <td>${mk.Kode_Matkul}</td>
+            <td>${mk.Nama_Matkul}</td>
+            <td>${mk.SKS}</td>
+        </tr>
+    `).join("");
+}
+//simpan pilihan matkul
+async function simpanMataKuliahAjaran() {
+    if (!selectedMK) {
+        alert("Pilih mata kuliah dulu!");
+        return;
+    }
+
+    // langsung buka form jadwal
+    loadFormJadwal(selectedMK);
+}
+//form atur jadwal
+async function loadFormJadwal(kode) {
+    const container = document.getElementById("atur-jadwal-container");
+
+    container.innerHTML = `
+        <h3>Atur Jadwal MK ${kode}</h3>
+
+        <label>Hari</label>
+        <select id="hari">
+            <option value="">Pilih Hari</option>
+            <option>Senin</option>
+            <option>Selasa</option>
+            <option>Rabu</option>
+            <option>Kamis</option>
+            <option>Jumat</option>
+            <option>Sabtu</option>
+        </select>
+
+        <label>Jam Mulai</label>
+        <input type="time" id="mulai">
+
+        <label>Jam Selesai</label>
+        <input type="time" id="selesai">
+
+        <label>Ruangan</label>
+        <input type="text" id="ruangan">
+
+        <button onclick="simpanJadwal('${kode}')">
+            Simpan Jadwal
+        </button>
+    `;
+}
+
+//load form jadwal 1 mk
+async function loadFormJadwal(kode) {
+    const res = await fetch(`${BASE}/get_jadwalMk_dosen.php?kode=${kode}`, {
+        credentials: "include"
+    });
+
+    const j = await res.json();
+
+    const hariOpts = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
+        .map(h => `<option value="${h}" ${j?.Hari===h?"selected":""}>${h}</option>`).join("");
+
+    document.getElementById("atur-jadwal-container").innerHTML = `
+        <h3>Jadwal MK ${kode}</h3>
+
+        <select id="hari">
+            <option value="">Pilih Hari</option>
+            ${hariOpts}
+        </select>
+
+        <input type="time" id="mulai" value="${j?.jam_mulai || ''}">
+        <input type="time" id="selesai" value="${j?.jam_selesai || ''}">
+        <input type="text" id="ruangan" value="${j?.Ruangan || ''}">
+    `;
+}
+
+//simpan jadwal
+async function simpanJadwal() {
+    const kode = document.querySelector("input[name='mk']:checked").value;
+
+    const payload = {
+        kode,
+        hari: document.getElementById("hari").value,
+        jam_mulai: document.getElementById("mulai").value,
+        jam_selesai: document.getElementById("selesai").value,
+        ruangan: document.getElementById("ruangan").value
+    };
+
+    const res = await fetch(`${BASE}/simpan_jadwal_dosen.php`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        credentials: "include",
+        body: JSON.stringify(payload)
+    });
+
+    alert("Tersimpan");
+}
+
+    // ==============================
+    // INIT
+    // ==============================
+    showPage("page-login");
+</script>
+
+</body>
+</html>
